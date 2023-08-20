@@ -49,6 +49,7 @@ public class MainApp {
         cars.forEach(System.out::println);
 
         System.out.println("++++++++++++++++++++++");
+        userService.exchangeCarsUsers(50L,40L);
 
         List<User> owners = userService.getUsersByCarModelAndSeries("AUDI", 8);
         owners.forEach(System.out::println);

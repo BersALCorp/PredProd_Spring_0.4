@@ -132,14 +132,20 @@ public class UserServiceImp implements UserService {
 
     @Transactional
     @Override
-    public void exchangeCarsUsers(User owner1, User owner2) {
+    public void exchangeCarsUsers(Long id1, Long id2) {
         try {
-            Car car1 = owner1.getCar();
-            Car car2 = owner2.getCar();
-            owner1.setCar(car2);
-            owner2.setCar(car1);
-            userDao.update(owner1);
-            userDao.update(owner2);
+            User user1 = userDao.getByUserId(id1);
+            User user2 = userDao.getByUserId(id2);
+            Car car1 = user1.getCar();
+            Car car2 = user2.getCar();
+            user1.setCar(car2);
+            user2.setCar(car1);
+            car1.setUser(user2);
+            car2.setUser(user1);
+            carDao.update(car1);
+            carDao.update(car2);
+            userDao.update(user1);
+            userDao.update(user2);
         } catch (Exception e) {
             throw new RuntimeException("Ошибка сохранения связанных объектов", e);
         }

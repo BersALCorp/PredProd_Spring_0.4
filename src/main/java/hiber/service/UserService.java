@@ -37,7 +37,7 @@ public interface UserService {
 
     void deleteUserFromCar(Car car);
 
-    void exchangeCarsUsers(User owner1, User owner2);
+    void exchangeCarsUsers(Long id1, Long id2);
 
     List<User> getUsersByCarModelAndSeries(String model, int series);
 
