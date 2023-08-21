@@ -1,7 +1,6 @@
 package hiber.service;
 
-import hiber.dao.CarDao;
-import hiber.dao.UserDao;
+import hiber.dao.GenericDao;
 import hiber.model.Car;
 import hiber.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,19 +12,19 @@ import java.util.List;
 @Service
 public class UserServiceImp implements UserService {
 
-    @Autowired
-    private UserDao userDao;
+    private final GenericDao genericDao;
 
     @Autowired
-    private CarDao carDao;
+    public UserServiceImp(GenericDao genericDao) {
+        this.genericDao = genericDao;
+    }
 
-    @Transactional
     @Override
     public void add(User user) {
         try {
-            userDao.add(user);
+            genericDao.add(user);
         } catch (Exception e) {
-            throw new RuntimeException("Ошибка сохранения юзера - ", e);
+            System.out.println("Ошибка сохранения юзера - " + e);
         }
     }
 
@@ -35,35 +34,43 @@ public class UserServiceImp implements UserService {
         try {
             user.setCar(car);
             car.setUser(user);
-            userDao.add(user);
-            carDao.add(car);
+            genericDao.add(user);
+            genericDao.add(car);
         } catch (Exception e) {
-            // Обработка ошибки
-            throw new RuntimeException("Ошибка сохранения связанных объектов - ", e);
+            System.out.println("Ошибка сохранения связанных объектов - " + e);
         }
     }
 
-    @Transactional
     @Override
     public User getUserById(long id) {
         try {
-            return userDao.getByUserId(id);
+            return genericDao.getById(User.class, id);
         } catch (Exception e) {
-            throw new RuntimeException("Ошибка получения юзера - ", e);
+            System.out.println("Ошибка получения юзера - " + e);
         }
+        return null;
+    }
+
+    @Override
+    public Car getCarById(long id) {
+        try {
+            return genericDao.getById(Car.class, id);
+        } catch (Exception e) {
+            System.out.println("Ошибка получения юзера - " + e);
+        }
+        return null;
     }
 
     @Transactional
     @Override
     public void addCarToUserId(Car car, long id) {
         try {
-            User temp = userDao.getByUserId(id);
-            temp.setCar(car);
+            User temp = genericDao.getById(User.class, id);
             car.setUser(temp);
-            carDao.update(car);
-            userDao.update(temp);
+            genericDao.update(car);
+            genericDao.update(temp);
         } catch (Exception e) {
-            throw new RuntimeException("Ошибка добавления машины к пользователю - ", e);
+            System.out.println("Ошибка добавления машины к пользователю - " + e);
         }
     }
 
@@ -71,49 +78,54 @@ public class UserServiceImp implements UserService {
     @Override
     public List<User> listUsers() {
         try {
-            return userDao.listUsers();
+            return genericDao.allItems(User.class);
         } catch (Exception e) {
-            throw new RuntimeException("Ошибка получения всех юзеров - ", e);
+            System.out.println("Ошибка получения всех юзеров - " + e);
         }
+        return null;
     }
 
     @Transactional(readOnly = true)
     @Override
     public List<Car> listCars() {
         try {
-            return carDao.listCars();
+            return genericDao.allItems(Car.class);
         } catch (Exception e) {
-            throw new RuntimeException("Ошибка получения всех машин - ", e);
+            System.out.println("Ошибка получения всех машин - " + e);
         }
+        return null;
     }
 
     @Transactional(readOnly = true)
     @Override
     public List<User> getUsersByCarModelAndSeries(String model, int series) {
         try {
-            return userDao.getUsersByCarModelAndSeries(model, series);
+            return genericDao.getUsersByCarModelAndSeries(model, series);
         } catch (Exception e) {
-            throw new RuntimeException("Ошибка получения всех юзеров по модели и серии машины - ", e);
+            System.out.println("Ошибка получения всех юзеров по модели и серии машины - " + e);
         }
+        return null;
     }
 
     @Transactional(readOnly = true)
     @Override
     public User getFirstUserByCarModelAndSeries(String model, int series) {
         try {
-            return userDao.getFirstUserByCarModelAndSeries(model, series, "ASC");
+            return genericDao.getFirstUserByCarModelAndSeries(model, series, "ASC");
         } catch (Exception e) {
-            throw new RuntimeException("Ошибка получения первого юзера по модели и серии машины - ", e);
+            System.out.println("Ошибка получения первого юзера по модели и серии машины - " + e);
         }
+        return null;
     }
 
     @Transactional(readOnly = true)
     @Override
     public User getLastUserByCarModelAndSeries(String model, int series) {
         try {
-            return userDao.getFirstUserByCarModelAndSeries(model, series, "DESC");
+            return genericDao.getFirstUserByCarModelAndSeries(model, series, "DESC");
         } catch (Exception e) {
-            throw new RuntimeException("Ошибка получения последнего юзера по модели и серии машины - ", e);
+            System.out.println("Ошибка получения последнего юзера по модели и серии машины - " + e);
         }
+        return null;
     }
 }

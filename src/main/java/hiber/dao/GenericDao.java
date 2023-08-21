@@ -6,16 +6,16 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 
 @Component
-public interface UserDao {
-    void add(User user);
+public interface GenericDao {
+    <T> void add(T entity);
 
-    void update(User user);
+    <T> void update(T entity);
 
-    void delete(User user);
+    <T> void delete(T entity);
 
-    User getByUserId(long id);
+    <T> T getById(Class<T> cls, long id);
 
-    List<User> listUsers();
+    <T> List<T> allItems(Class cls);
 
     List<User> getUsersByCarModelAndSeries(String model, int series);
 

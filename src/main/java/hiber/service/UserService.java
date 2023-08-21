@@ -12,6 +12,8 @@ public interface UserService {
 
     User getUserById(long id);
 
+    Car getCarById(long id);
+
     void addCarToUserId(Car car, long id);
 
     List<User> listUsers();
